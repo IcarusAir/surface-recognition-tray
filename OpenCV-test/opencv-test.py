@@ -10,7 +10,7 @@ import numpy as np
 import scipy
 import sys
 
-test = 3
+test = 1
 
 # Blank function that runs when trackbar is updated
 def nothing(x):
@@ -75,8 +75,7 @@ elif (test == 2):
 
     while(1):
         cv.imshow('image',img)
-        k = cv.waitKey(1) & 0xFF
-        if (k == 27) :
+        if cv.waitKey(1) == ord('q') :
             break
 
         #Get positions of the trackbars
@@ -100,6 +99,6 @@ elif (test == 3):
 
     while (1):
         cv.imshow('image',img)
-        if cv.waitKey(20) & 0xFF == 27:
+        if cv.waitKey(20) == ord('q'):
             break
     cv.destroyAllWindows()
