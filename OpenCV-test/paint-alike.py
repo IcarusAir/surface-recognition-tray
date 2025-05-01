@@ -11,7 +11,9 @@ import numpy as np
 color = (0,0,0)
 radius = 1
 drawing = False
-img = np.ones((512,512,3), np.uint8)
+#img = np.ones((512,512,3), np.uint8)
+# Draw on Mario!
+img = cv.imread('../test-data/elephant.jpg')
 
 def nothing(x):
     pass
