@@ -29,11 +29,11 @@ def updateBlendedGamma(x):
     img_blend = cv.addWeighted(img,alpha,img2,beta,gamma)
     cv.imshow('image',img_blend)
 
-test = 2
+test = 3
 
 if (test == 0):
     # Image Operations
-    img = cv.imread('../test-data/elephant.jpg')
+    img = cv.imread('../test-data/elephant.png')
     assert img is not None, "file could not be read, check with os.path.exists()"
 
     # Get Eyes ROI
