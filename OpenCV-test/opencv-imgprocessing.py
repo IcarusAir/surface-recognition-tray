@@ -8,7 +8,7 @@
 import cv2 as cv
 import numpy as np
 
-test = 1
+test = 0
 
 if (test == 0):
     # Colour Space Conversion
@@ -29,7 +29,7 @@ if (test == 0):
         frame_hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
 
         # Making use of OpenCV inrange function, define upper and lower ranges of HSV values
-        blue_lower = np.array([100,50,50]) #Around 30% of max Saturation and Value
+        blue_lower = np.array([90,50,50]) #Around 30% of max Saturation and Value
         blue_upper = np.array([130,255,255]) #Max Saturation and Value
         mask_blue = cv.inRange(frame_hsv,blue_lower,blue_upper) #Return the given frame with white pixels in the given range and black pixels outside it
 
@@ -52,7 +52,7 @@ if (test == 0):
 
         # Show Image and color masks
         cv.imshow('frame',frame_inv)
-        cv.imshow('mask_g',frame_blue)
+        cv.imshow('mask_b',frame_blue)
         # cv.imshow('mask_g',frame_green)
         # cv.imshow('mask_r',frame_red)
         if (cv.waitKey(20)==ord('q')):
@@ -94,6 +94,17 @@ elif (test == 1) :
 
 elif (test == 2):
     # thresholding, important for this project
-    pass
+    # Import image to be thresholded
+    img_val = 0
+    if (img_val):
+        img = cv.imread('../test-data/dreamy.jpg')
+    else:
+        img = cv.imread('../test-data/elephant.jpg')
+    # Double picture dimensions
+    img = cv.resize(img,None,fx=2,fy=2,interpolation=cv.INTER_LINEAR)
+    
+
+    cv.imshow('image',img)
+    cv.waitKey()
 
     

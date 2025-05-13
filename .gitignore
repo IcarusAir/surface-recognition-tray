@@ -4,5 +4,5 @@ __pycache__/
 *$py.class
 
 # Ignore Images used for tests
-test-data/*.jpg
-test-data/*.png
+# test-data/*.jpg
+# test-data/*.png
