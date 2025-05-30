@@ -7,8 +7,12 @@
 
 import cv2 as cv
 import numpy as np
+from matplotlib import pyplot as plt
 
-test = 0
+test = 4
+
+def nothing(x):
+    pass
 
 if (test == 0):
     # Colour Space Conversion
@@ -99,12 +103,97 @@ elif (test == 2):
     if (img_val):
         img = cv.imread('../test-data/dreamy.jpg')
     else:
-        img = cv.imread('../test-data/elephant.jpg')
+        img = cv.imread('../test-data/elephant.jpg', cv.IMREAD_GRAYSCALE)
     # Double picture dimensions
     img = cv.resize(img,None,fx=2,fy=2,interpolation=cv.INTER_LINEAR)
+    cv.imshow('img',img)
+
+    # Convert to RGB Colourspace for matplotlib
+    rgb = cv.cvtColor(img, 4)
     
+    # Perform all basic thresholding on the imported image
+    ret,thresh1 = cv.threshold(rgb,127,255,cv.THRESH_BINARY)
+    ret,thresh2 = cv.threshold(rgb,127,255,cv.THRESH_BINARY_INV)
+    ret,thresh3 = cv.threshold(rgb,127,255,cv.THRESH_TRUNC)
+    ret,thresh4 = cv.threshold(rgb,127,255,cv.THRESH_TOZERO)
+    ret,thresh5 = cv.threshold(rgb,127,255,cv.THRESH_TOZERO_INV)
 
-    cv.imshow('image',img)
-    cv.waitKey()
+    titles = ['Original','BINARY','BINARY_INV','TRUNC','TOZERO','TOZERO_INV']
+    images = [rgb,thresh1,thresh2,thresh3,thresh4,thresh5]
 
+    for i in range(6):
+        plt.subplot(2,3,i+1),plt.imshow(images[i],'gray',vmin=0,vmax=255)
+        plt.title(titles[i])
+        plt.xticks([]),plt.yticks([])
+    
+    plt.show()
+
+elif (test == 3):
+    # Adaptive Thresholding
+    img = cv.imread('../test-data/elephant.jpg',cv.IMREAD_GRAYSCALE)
+
+    ret, thresh1 = cv.threshold(img,127,255,cv.THRESH_BINARY)
+    thresh2 = cv.adaptiveThreshold(img,255,cv.ADAPTIVE_THRESH_MEAN_C,cv.THRESH_BINARY,15,0)
+    thresh3 = cv.adaptiveThreshold(img,255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,15,0)
+    # The blockSize parameter refers to an n x n matrix of pixels (refered to as a neighbourhood)
+    # In this case we are looking at a 5x5 area around each pixel to calculate a threshold value
+    # For Gaussian, this 5x5 neighbourhood would follow the 2d discrete Gaussian function, with the central pixel being 0,0.
+    
+    # Show the thresholds in a plot
+    images = [img,thresh1,thresh2,thresh3]
+    titles = ['original','global','mean','gaussian']
+
+    for i in range(4):
+        plt.subplot(2,2,i+1),plt.imshow(images[i],'gray')
+        plt.title(titles[i])
+        plt.xticks([]),plt.yticks([])
+    plt.show()
+
+elif (test == 4):
+    # Different types of blurring filters, let's do video this time:
+    capture = cv.VideoCapture(0)
+    cv.namedWindow('original')
+    cv.namedWindow('box blur')
+    cv.namedWindow('gaussian')
+
+    # Create Trackbar for blur factor
+    cv.createTrackbar('Blur','original',1,100,nothing) #'image' is passed as the named window to add the trackbar to.
+
+    # Loop to capture frames:
+    while (True):
+        _,frame = capture.read()
+
+        # Perform filtering
+        # Gaussian 7x7 kernel.
+        g_kernel = np.array([[0, 0, 1, 2, 1, 0, 0],
+                          [0, 3, 13, 22, 13, 2, 0],
+                          [1, 13, 59, 97, 59, 13, 1],
+                          [2, 22, 97, 159, 97, 22, 2],
+                          [1, 13, 59, 97, 59, 13, 1],
+                          [0, 3, 13, 22, 13, 2, 0],
+                          [0, 0, 1, 2, 1, 0, 0]],np.float32)/1003
+        
+        # Box Blur with trackbar
+        blur_factor = cv.getTrackbarPos('Blur','original')
+        if (blur_factor == None or blur_factor == 0):
+            blur_factor = 1
+        # The trackbar sets the size of the np array dimension. So 11 creates an 11x11 box blur kernel.
+        box_kernel = np.ones((blur_factor,blur_factor),np.float32)/(blur_factor*blur_factor)
+        
+        f_frame = cv.filter2D(frame,-1,box_kernel)
+
+        # Create a Gaussian Blur (must be a positive odd integer, this math is just collapsing the blur factor to an add value)
+        if (blur_factor%2 == 0):
+            g_factor = blur_factor - 1
+        else:
+            g_factor = blur_factor
+        g_frame = cv.GaussianBlur(frame,(g_factor,g_factor),0)
+
+        # Show frames:
+        cv.imshow('original',frame)
+        cv.imshow('box blur',f_frame)
+        cv.imshow('gaussian',g_frame)
+
+        if (cv.waitKey(1) == ord('q')):
+            break
     
