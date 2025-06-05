@@ -9,7 +9,7 @@ import cv2 as cv
 import numpy as np
 from matplotlib import pyplot as plt
 
-test = 4
+test = 5
 
 def nothing(x):
     pass
@@ -196,4 +196,31 @@ elif (test == 4):
 
         if (cv.waitKey(1) == ord('q')):
             break
+
+elif (test == 5):
+    # Morphological operations
+    j = cv.imread('../test-data/j.png',cv.IMREAD_GRAYSCALE)
+
+    cv.namedWindow('original')
+    cv.namedWindow('dilated')
+    cv.namedWindow('gradient')
+    cv.namedWindow('closed')
+
+    # Perform operations
+    kernel = np.ones((3,3),np.uint8)
+    erosion = cv.erode(j,kernel,iterations = 1)
+    dilation = cv.dilate(j,kernel,iterations = 1)
+
+    # Closing a loop
+    gradient = cv.morphologyEx(dilation, cv.MORPH_GRADIENT, kernel)
+    closed = cv.morphologyEx(gradient, cv.MORPH_CLOSE, kernel)
+    
+    # Show Results
+    cv.imshow('original',j)
+    cv.imshow('dilated',dilation)
+    cv.imshow('gradient',gradient)
+    cv.imshow('closed',closed)
+
+    cv.waitKey()
+
     
